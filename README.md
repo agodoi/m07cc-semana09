@@ -1,4 +1,4 @@
-# Prevenção Contra SQL Injection
+# Segurança no Desenvolvimento de Aplicações: SQL Injection
 
 Neste encontro iremos abordar a proteção de dados na nuvem no contexto de desenvolvimento de aplicações seguras e proteção contra ataques de SQL Injection.
 
