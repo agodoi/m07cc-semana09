@@ -169,7 +169,7 @@ Imagine que foi digitado o seguinte:
 #### Lembrando: na Álgebra de Boole, Falso + True = True
 
 
-<img src="https://github.com/agodoi/sqlinjection/blob/main/imgs/tela_banco_03.png" width="800">
+<img src="https://github.com/agodoi/m07cc-semana09/blob/main/imgs/preview_login3.png" width="800">
 
 #### Explicação
 
