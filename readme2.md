@@ -58,7 +58,7 @@ Dependendo da forma que você interage com as aplicações de RDS do seu projeto
 
 * Recuperação de dados sensíveis;
 
-* Deleção de tabelas,
+* Deleção de tabelas;
 
 * Elevação de privilégios no sistema;
 
@@ -102,7 +102,7 @@ sql = "SELECT id FROM users WHERE username='" + user + "' AND password='" + pass
   
 - A consulta tenta selecionar o ```id``` de um usuário a partir de uma tabela ```users```, onde o campo ```username``` deve corresponder ao valor da variável ```user```, e o campo ```password``` deve corresponder ao valor da variável ```pass```.
 
-- A expressão ```user + "' AND password='" + pass + "``` insere diretamente os valores de ```user``` e ```pass``` na string SQL. Isso é uma forma arriscada de construir consultas SQL, pois o conteúdo de ```user``` e ```pass``` não está sendo verificado ou tratado de forma segura.
+- A expressão ```user + "' AND password='" + pass + "'"``` insere diretamente os valores de ```user``` e ```pass``` na string SQL. Isso é uma forma arriscada de construir consultas SQL, pois o conteúdo de ```user``` e ```pass``` não está sendo verificado ou tratado de forma segura.
 
 ---
 ### 2.5) Exemplo 1 de código malicioso
@@ -134,6 +134,8 @@ Imagine que foi digitado o seguinte:
 SELECT id FROM users WHERE username= 'godoi' AND password='XxxXxxX' OR 1=1'
 ```
 
+* Esse payload **sozinho quebra a consulta** (por causa da aspa a mais no final). Para o ataque **funcionar de fato**, fecha-se a aspa — ```' OR '1'='1``` — ou comenta-se o resto da linha com ```--```, como no item 2.6. Você vai testar as duas formas na prática do item 2.8.
+
 * Inserção de comentário: algumas sequências de caracteres são delimitadores de início de comentários:
 
    - MySQL, MS-SQL, Oracle, PostgreSQL, SQLite:
@@ -146,7 +148,7 @@ SELECT id FROM users WHERE username= 'godoi' AND password='XxxXxxX' OR 1=1'
      * ' OR '1'='1' %00
      * ' OR '1'='1' %16
 
-   - Uso de caracteres especiais: se sua aplicações aceita os caracteres especiais, é provável que ela esteja vulnerável. 
+   - Uso de caracteres especiais: o problema não é o caractere em si, mas montar a consulta por **concatenação** sem tratamento. Uma aplicação que concatena a entrada diretamente tende a ser vulnerável a caracteres como os abaixo — já uma aplicação com **consulta parametrizada** os aceita sem risco:
 
       * **'** aspas simples
       * **"** aspas dupla
@@ -179,10 +181,9 @@ SELECT id FROM users WHERE username= ' ' OR 1=1 --' AND password=' '
 
 * Nesse caso, nem mesmo username válido é preciso.
 
-* O atacante nem sempre sabe qual servidor SQL está em execução. Assim, a condição **Sempre TRUE** pode variar e é detectado por tentativa e erro:
+* O atacante nem sempre sabe qual servidor SQL está em execução. Assim, a condição **Sempre TRUE** pode variar e é detectada por tentativa e erro:
    - '1'='1' 
    - 1=1
-   - =
    - true
 
 
@@ -197,6 +198,8 @@ Ao se usar HTTP/GET, as variáveis do formulário ficam expostas na barra de nav
 ```http://testphp.vulnweb.com/artists.php?artist=1```
 
 O formulário tem um método **get** que expõe a variável ```artist=1```. Veja a foto e o site [http://testphp.vulnweb.com/artists.php?artist=2](http://testphp.vulnweb.com/artists.php?artist=2)
+
+> **Atenção:** o `testphp.vulnweb.com` é um site externo, mantido pela Acunetix para treino. Ele costuma estar no ar, mas pode ficar indisponível sem aviso — ao contrário do seu laboratório local (item 2.8), que você controla. O próprio `app.py` também aceita ataques via **GET** direto na barra de endereço, servindo de alternativa caso o site externo esteja fora.
 
 
 
@@ -310,7 +313,7 @@ sucesso, sql, quem = login_seguro(usuario, senha)
 
 Salve, pare o servidor (`Ctrl + C`) e rode de novo. Repita os ataques A e B → agora dá **ACESSO NEGADO**. A versão segura usa **prepared statement** (`WHERE username=? AND password=?`), tratando a entrada como **dado**, nunca como **código SQL** — a mesma ideia dos itens 3.2 a 3.4.
 
-> Isso resolve o SQL Injection, mas **não** resolve a captura no Wireshark: a senha só para de aparecer com **HTTPS/TLS**. Bom gancho para a discussão de encerramento.
+> Isso resolve o SQL Injection, mas **não** resolve a captura no Wireshark: a senha só para de aparecer com **HTTPS/TLS**.
 
 **Perguntas para fechar com a turma**
 
@@ -324,7 +327,7 @@ Salve, pare o servidor (`Ctrl + C`) e rode de novo. Repita os ataques A e B → 
 
 ### 3.1) Prevenção usando ASP (Active Server Pages)
 
-A prevenção é simples, mas o sucesso do ataque acaba sendo consequência da falta de preparo dos desenvolvedores. O serviço AWS WAF (Web Application Firewalls) não detectam as vulnerabilidades, mas sinalizam alarmes em situações conhecidas de ataque ou em situações de grande número de erros ou **UNIONS** dentro de solicitações.
+A prevenção é simples, mas o sucesso do ataque acaba sendo consequência da falta de preparo dos desenvolvedores. O serviço AWS WAF (Web Application Firewall) não detecta as vulnerabilidades do seu código; ele inspeciona o **tráfego** e sinaliza alarmes em situações conhecidas de ataque ou em situações de grande número de erros ou **UNIONS** dentro de solicitações (veja o item 4.1).
 
 As linguagens modernas para web fazem a defesa baseada na preparação das consultas SQL antes de serem submetidas ao banco
 
@@ -452,10 +455,12 @@ SELECT * FROM table WHERE userid = '12345';
 - Ao usar ```mysql.format()```, a função substitui o placeholder ```?``` de maneira segura, escapando corretamente os valores e impedindo que entradas maliciosas sejam executadas como parte do SQL. Por exemplo, se alguém tentasse injetar uma string perigosa como ```"' OR '1'='1"```, ela seria tratada como uma simples string e não como parte do SQL.
 
 ---
-## 4) Prevenção de SQL Injection usando AWS
+## 4) Segurança de banco de dados na AWS (defesa em profundidade)
+
+> **Importante:** a prevenção **real** do SQL Injection acontece no **código**, com **consultas parametrizadas / prepared statements** (seção 3). Os serviços a seguir **não substituem** isso: o **WAF** ajuda a bloquear tentativas de ataque, e os demais reduzem a **superfície** e o **impacto** de um ataque bem-sucedido. Isso é o que se chama de *defesa em profundidade* — várias camadas de proteção, não uma bala de prata.
 
 ### 4.1) AWS WAF (Web Application Firewall)
-   - Função: O AWS WAF ajuda a proteger suas aplicações web contra explorações comuns, incluindo SQL Injection.
+   - Função: O AWS WAF ajuda a proteger suas aplicações web contra explorações comuns, incluindo tentativas de SQL Injection.
    - Como configurar para SQL Injection:
      - No AWS WAF, crie regras personalizadas que bloqueiam ou limitam tentativas de SQL Injection.
      - Habilite a regra "SQL Injection Match Condition", que detecta padrões comuns de injeções de SQL nas requisições.
@@ -464,10 +469,11 @@ SELECT * FROM table WHERE userid = '12345';
      - Adicione uma regra de SQL Injection à ACL do AWS WAF.
      - Associe essa ACL à distribuição do Amazon CloudFront ou ao API Gateway.
      - Preços: [https://aws.amazon.com/pt/waf/pricing/](https://aws.amazon.com/pt/waf/pricing/)
+   - Limitação: o WAF inspeciona o **tráfego** e barra padrões conhecidos de ataque, mas **não corrige** a falha no seu código nem bloqueia 100% dos payloads. Ele é uma camada extra, não um substituto da consulta parametrizada.
 
 ---
 ### 4.2) Amazon RDS (Relational Database Service)
-   - Função: Gerenciamento seguro de bancos de dados, com encriptação automática de dados e proteção contra falhas de segurança comuns.
+   - Função: Gerenciamento de bancos de dados com criptografia automática de dados e recursos que reduzem a superfície de ataque. **Não previne SQL Injection por si só** — ajuda a limitar o dano caso um ataque ocorra.
    - Configurações para melhorar a segurança:
      - IAM Authentication: Use autenticação baseada no IAM para evitar senhas SQL hardcoded.
      - Encrypted connections: Garanta que as conexões com o banco sejam feitas via SSL para impedir interceptações.
@@ -476,17 +482,17 @@ SELECT * FROM table WHERE userid = '12345';
 ---
 ### 4.3) Amazon Cognito
    - Função: Gerenciamento de autenticação de usuários com foco na segurança.
-   - Como ajuda a prevenir SQL Injection:
-     - Cognito permite que sua aplicação autentique usuários sem precisar manipular diretamente as senhas no código-fonte. Isso reduz o risco de injeções maliciosas em campos sensíveis.
-     - Integre a autenticação com Cognito para criar uma camada extra de segurança.
+   - Como se relaciona com SQL Injection:
+     - Cognito assume o fluxo de **autenticação** fora da sua aplicação. Assim, aquele formulário de login deixa de ser um ponto de entrada seu para SQL Injection, pois você não escreve mais a consulta de login manualmente.
+     - **Atenção:** isso não "imuniza" o resto do sistema. Todas as **demais** consultas da sua aplicação (busca, listagem, cadastro, etc.) continuam exigindo consultas parametrizadas — Cognito cuida do login, não das outras queries.
 
 ---
 
 ### 4.4) AWS Secrets Manager
-   - Função: Protege segredos necessários pela aplicação (como senhas de banco de dados) e faz a rotação automática.
-   - Como utilizar:
-     - Configure o AWS Secrets Manager para gerenciar credenciais do banco de dados.
-     - Garanta que as credenciais não estejam hardcoded no código, eliminando vetores de ataque comuns.
+   - Função: Protege segredos usados pela aplicação (como senhas de banco de dados) e faz a rotação automática.
+   - Como se relaciona com segurança:
+     - Guardar credenciais fora do código evita que senhas vazem junto com o código-fonte e reduz o impacto de um vazamento.
+     - **Observação:** credencial hardcoded é um problema de segurança **diferente** do SQL Injection — o Secrets Manager melhora a postura geral de segurança, mas **não** previne injeção de SQL.
 
      Exemplo de Integração:
      ```php
@@ -503,10 +509,12 @@ SELECT * FROM table WHERE userid = '12345';
    - Monitoramento com CloudWatch e GuardDuty: Monitore atividades incomuns e potencialmente maliciosas em suas aplicações e infraestrutura, incluindo tentativas de SQL Injection.
 
 ---
-## 5) Outros códigos SQL de ataque
+## 5) Outros códigos SQL de ataque (histórico / opcional)
+
+> **Nota:** os exemplos abaixo são **históricos e opcionais**. Baseiam-se em mensagens de erro do **Microsoft SQL Server 2000 / OLE DB / ASP** e servem para ilustrar a *enumeração de esquema por mensagens de erro* — uma técnica de descoberta em que o atacante aprende a estrutura do banco a partir dos próprios erros retornados. Eles **não** usam o ambiente do laboratório (SQLite/Python) e podem ser tratados como conteúdo avançado. Lembre-se: em SQL, o comentário de linha é `--` (dois hifens).
 
 
-### 5.1) ```Username: ' having 1=1—```
+### 5.1) ```Username: ' having 1=1 --```
 
 -- Error
 Microsoft OLE DB Provider for ODBC Drivers error '80040e14’
@@ -518,7 +526,7 @@ Microsoft OLE DB Provider for ODBC Drivers error '80040e14’
 Usando o comando ```HAVING 1=1 --``` faria com que qualquer coisa após o -- fosse desconsiderada, porque é um comentário em SQL. Por exemplo, a parte da consulta que verifica a senha seria ignorada, o que poderia permitir o login sem fornecer uma senha válida.
 
 ---
-### 5.2) ```Username: ' group by users.id having 1=1—```
+### 5.2) ```Username: ' group by users.id having 1=1 --```
 
 -- Error
 Microsoft OLE DB Provider for ODBC Drivers error '80040e14’
@@ -529,7 +537,7 @@ Microsoft OLE DB Provider for ODBC Drivers error '80040e14’
 **Conquista do hacker:** ele descobre que a segunda coluna da tabela users é ```username```
 
 ---
-### 5.3) ```Username: ' group by users.id, users.username having 1=1—```
+### 5.3) ```Username: ' group by users.id, users.username having 1=1 --```
 
 -- Error
 Microsoft OLE DB Provider for ODBC Drivers error '80040e14’
@@ -540,7 +548,7 @@ Microsoft OLE DB Provider for ODBC Drivers error '80040e14’
 **Conquista do hacker:** ele descobre que a terceira coluna da tabela users é ```password```.
 
 ---
-### 5.4) ```Username: ' union select sum(username) from users—```
+### 5.4) ```Username: ' union select sum(username) from users --```
 
 -- Error
 
@@ -553,10 +561,10 @@ Microsoft OLE DB Provider for ODBC Drivers error '80040e07' [Microsoft][ODBC SQL
 ---
 ### 5.5) De posse dos campos do banco de dados, pode-se encadear (com “;”) um comando de inserção:
 
-```Username: '; insert into users values(9999, ‘willy', 'foobar')--```
+```Username: '; insert into users values(9999, 'willy', 'foobar') --```
 
 ---
-### 5.6) Username: ' ' union select @@version,1,1,1—-
+### 5.6) Username: ' union select @@version,1,1,1 --
 
 -- Error
 
