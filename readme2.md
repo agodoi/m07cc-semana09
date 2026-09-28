@@ -69,29 +69,7 @@ Dependendo da forma que você interage com as aplicações de RDS do seu projeto
 ---
 #### 2.4) Exemplo de código vulnerável
 
-Imagine uma aplicação como essa de login em um banco de dados.
-
-```
-<html>
-<head><title>Pagina de Login</title></head>
-  <body bgcolor='000000' text='cccccc'>
-    <font face='tahoma' color='cccccc'>
-    <center><H1>LOGIN</H1>
-    <form action='processa_login.asp' method='post'>
-      <table>
-        <tr><td>Username:</td><td>
-        <input type=text name=username size=100% width=100>
-        </input></td></tr>
-        <tr><td>Password:</td><td>
-        <input type=password name=password size=100% width=100>
-        </input></td></tr>
-      </table>
-      <input type=submit name=enviar><input type=reset name=Redefinir>
-    </form>
-  </body>
-</html>
-
-```
+Imagine uma aplicação de login em um banco de dados, como a da imagem abaixo. O formulário e o servidor completos deste exemplo (propositalmente vulneráveis) estão no arquivo [`app.py`](./src/app.py), dentro da subpasta `src` do repositório — você vai baixá-lo e executá-lo na prática guiada do item **2.8**.
 
 <img src="https://github.com/agodoi/m07cc-semana09/blob/main/imgs/preview_login.png" width="800">
 
