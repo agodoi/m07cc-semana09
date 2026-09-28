@@ -119,7 +119,7 @@ Imagine que foi digitado o seguinte:
 
 
 
-<img src="https://github.com/agodoi/sqlinjection/blob/main/imgs/tela_banco_02.png" width="800">
+<img src="https://github.com/agodoi/m07cc-semana09/blob/main/imgs/preview_login2.png" width="800">
 
 
 #### Explicação
