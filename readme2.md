@@ -69,7 +69,7 @@ Dependendo da forma que você interage com as aplicações de RDS do seu projeto
 ---
 ### 2.4) Exemplo de código vulnerável
 
-Imagine uma aplicação de login em um banco de dados, como a da imagem abaixo. O formulário e o servidor completos deste exemplo (propositalmente vulneráveis) estão no arquivo [`app.py`](./src/app.py), dentro da subpasta `src` do repositório — você vai baixá-lo e executá-lo na prática guiada do item **2.8**.
+Imagine uma aplicação de login em um banco de dados, como a da imagem abaixo. O formulário e o servidor completos deste exemplo (propositalmente vulneráveis) estão no arquivo [`app.py`](./src/app.py), dentro da subpasta `src` do repositório, você vai baixá-lo e executá-lo na prática guiada do item **2.8**.
 
 <img src="https://github.com/agodoi/m07cc-semana09/blob/main/imgs/preview_login.png" width="800">
 
@@ -148,7 +148,7 @@ SELECT id FROM users WHERE username= 'godoi' AND password='XxxXxxX' OR 1=1'
      * ' OR '1'='1' %00
      * ' OR '1'='1' %16
 
-   - Uso de caracteres especiais: o problema não é o caractere em si, mas montar a consulta por **concatenação** sem tratamento. Uma aplicação que concatena a entrada diretamente tende a ser vulnerável a caracteres como os abaixo — já uma aplicação com **consulta parametrizada** os aceita sem risco:
+   - Uso de caracteres especiais: o problema não é o caractere em si, mas montar a consulta por **concatenação** sem tratamento. Uma aplicação que concatena a entrada diretamente tende a ser vulnerável a caracteres como os abaixo, já uma aplicação com **consulta parametrizada** os aceita sem risco:
 
       * **'** aspas simples
       * **"** aspas dupla
@@ -199,7 +199,7 @@ Ao se usar HTTP/GET, as variáveis do formulário ficam expostas na barra de nav
 
 O formulário tem um método **get** que expõe a variável ```artist=1```. Veja a foto e o site [http://testphp.vulnweb.com/artists.php?artist=2](http://testphp.vulnweb.com/artists.php?artist=2)
 
-> **Atenção:** o `testphp.vulnweb.com` é um site externo, mantido pela Acunetix para treino. Ele costuma estar no ar, mas pode ficar indisponível sem aviso — ao contrário do seu laboratório local (item 2.8), que você controla. O próprio `app.py` também aceita ataques via **GET** direto na barra de endereço, servindo de alternativa caso o site externo esteja fora.
+> **Atenção:** o `testphp.vulnweb.com` é um site externo, mantido pela Acunetix para treino. Ele costuma estar no ar, mas pode ficar indisponível sem aviso, ao contrário do seu laboratório local (item 2.8), que você controla. O próprio `app.py` também aceita ataques via **GET** direto na barra de endereço, servindo de alternativa caso o site externo esteja fora.
 
 
 
@@ -213,7 +213,7 @@ Agora que você já viu a teoria, vamos fazer o ataque de verdade. Nesta prátic
 
 > ⚠️ Ambiente 100% local, inseguro de propósito. Use **somente** na sua própria máquina ou na rede de laboratório da aula.
 
-O servidor é um único arquivo `app.py`, escrito em **Python puro (sem instalar nenhuma biblioteca)**, com o banco **SQLite já embutido** — a mesma tabela `users` do item 2.4.
+O servidor é um único arquivo `app.py`, escrito em **Python puro (sem instalar nenhuma biblioteca)**, com o banco **SQLite já embutido**, a mesma tabela `users` do item 2.4.
 
 **O que você precisa**
 
@@ -221,11 +221,11 @@ O servidor é um único arquivo `app.py`, escrito em **Python puro (sem instalar
 - **Wireshark** instalado: [wireshark.org](https://www.wireshark.org/).
 - Estar na **mesma rede Wi-Fi** do professor (deixa a captura mais fácil de ver).
 
-**Passo 1 — Baixar o programa**
+**Passo 1: Baixar o programa**
 
 Baixe o arquivo `app.py` da pasta `src` do repositório e salve numa pasta na sua máquina.
 
-**Passo 2 — Subir o servidor**
+**Passo 2: Subir o servidor**
 
 Abra o terminal na pasta onde está o `app.py` e rode:
 
@@ -243,18 +243,18 @@ Acesse na propria maquina:  http://localhost:8000
 Acesse pela rede local:     http://SEU_IP:8000
 ```
 
-**Passo 3 — Descobrir o IP da máquina do servidor**
+**Passo 3: Descobrir o IP da máquina do servidor**
 
 É o endereço que os alunos vão digitar no navegador:
 - **Windows:** `ipconfig` → procure "Endereço IPv4" (ex.: `192.168.0.15`).
 - **Linux:** `ip a` → procure o `inet` da placa Wi-Fi.
 - **Mac:** `ifconfig` ou Preferências → Rede.
 
-**Passo 4 — Abrir a página**
+**Passo 4: Abrir a página**
 
 No navegador, acesse `http://SEU_IP:8000` (ou `http://localhost:8000` na própria máquina). Aparece a tela de login do **Banco Aurora** (banco fictício).
 
-**Passo 5 — Preparar o Wireshark**
+**Passo 5: Preparar o Wireshark**
 
 Abra o Wireshark, dê **duplo clique na interface Wi-Fi** (a captura começa) e, no filtro do topo, digite e tecle Enter:
 
@@ -264,7 +264,7 @@ http.request
 
 Isso mostra apenas as requisições HTTP, para não se perder no meio de milhares de pacotes.
 
-**Passo 6 — Login normal (para ver a senha em texto puro)**
+**Passo 6: Login normal (para ver a senha em texto puro)**
 
 - Usuário: `godoi`
 - Senha: `admin12345`
@@ -278,7 +278,7 @@ GET /login?username=godoi&password=admin12345&enviar=Entrar HTTP/1.1
 
 👉 Repare: **a senha aparece limpa**, sem nenhuma proteção. É o efeito de usar **HTTP (sem "S")**. Clicando com o botão direito → **Follow → HTTP Stream**, você vê toda a conversa em texto. Com **HTTPS/TLS**, esse mesmo tráfego apareceria criptografado e ilegível.
 
-**Passo 7 — O ataque de SQL Injection (itens 2.5 e 2.6)**
+**Passo 7: O ataque de SQL Injection (itens 2.5 e 2.6)**
 
 - **Ataque A (item 2.5):** Usuário `godoi` / Senha `XxxXxxX' OR '1'='1` → **entra como admin**, mesmo com a senha errada.
 - **Ataque B (item 2.6):** Usuário `' OR 1=1 --` / Senha em branco → **entra como admin**, sem saber usuário nem senha.
@@ -293,9 +293,9 @@ SELECT id, username FROM users WHERE username='' OR 1=1 --' AND password=''
 
 O `OR 1=1` é sempre verdadeiro e o `--` comenta o resto da linha, ignorando a checagem de senha. Como `OR 1=1` casa com **todas** as linhas, o banco devolve a primeira (o `admin`).
 
-> Nota: neste laboratório o SQLite **não deixa** encadear `; drop table users` (o `execute` aceita só um comando), então os alunos podem atacar à vontade **sem destruir o banco** — o cenário destrutivo do item 2.6 é explicado, mas não acontece aqui.
+> Nota: neste laboratório o SQLite **não deixa** encadear `; drop table users` (o `execute` aceita só um comando), então os alunos podem atacar à vontade **sem destruir o banco**, o cenário destrutivo do item 2.6 é explicado, mas não acontece aqui.
 
-**Passo 8 — A defesa (fechar o buraco)**
+**Passo 8: A defesa (fechar o buraco)**
 
 Abra o `app.py` e, dentro de `do_GET`, procure estas duas linhas:
 
@@ -311,7 +311,7 @@ Inverta o comentário para ativar a versão segura:
 sucesso, sql, quem = login_seguro(usuario, senha)
 ```
 
-Salve, pare o servidor (`Ctrl + C`) e rode de novo. Repita os ataques A e B → agora dá **ACESSO NEGADO**. A versão segura usa **prepared statement** (`WHERE username=? AND password=?`), tratando a entrada como **dado**, nunca como **código SQL** — a mesma ideia dos itens 3.2 a 3.4.
+Salve, pare o servidor (`Ctrl + C`) e rode de novo. Repita os ataques A e B → agora dá **ACESSO NEGADO**. A versão segura usa **prepared statement** (`WHERE username=? AND password=?`), tratando a entrada como **dado**, nunca como **código SQL**, a mesma ideia dos itens 3.2 a 3.4.
 
 > Isso resolve o SQL Injection, mas **não** resolve a captura no Wireshark: a senha só para de aparecer com **HTTPS/TLS**.
 
@@ -457,7 +457,7 @@ SELECT * FROM table WHERE userid = '12345';
 ---
 ## 4) Segurança de banco de dados na AWS (defesa em profundidade)
 
-> **Importante:** a prevenção **real** do SQL Injection acontece no **código**, com **consultas parametrizadas / prepared statements** (seção 3). Os serviços a seguir **não substituem** isso: o **WAF** ajuda a bloquear tentativas de ataque, e os demais reduzem a **superfície** e o **impacto** de um ataque bem-sucedido. Isso é o que se chama de *defesa em profundidade* — várias camadas de proteção, não uma bala de prata.
+> **Importante:** a prevenção **real** do SQL Injection acontece no **código**, com **consultas parametrizadas / prepared statements** (seção 3). Os serviços a seguir **não substituem** isso: o **WAF** ajuda a bloquear tentativas de ataque, e os demais reduzem a **superfície** e o **impacto** de um ataque bem-sucedido. Isso é o que se chama de *defesa em profundidade*, várias camadas de proteção, não uma bala de prata.
 
 ### 4.1) AWS WAF (Web Application Firewall)
    - Função: O AWS WAF ajuda a proteger suas aplicações web contra explorações comuns, incluindo tentativas de SQL Injection.
@@ -473,7 +473,7 @@ SELECT * FROM table WHERE userid = '12345';
 
 ---
 ### 4.2) Amazon RDS (Relational Database Service)
-   - Função: Gerenciamento de bancos de dados com criptografia automática de dados e recursos que reduzem a superfície de ataque. **Não previne SQL Injection por si só** — ajuda a limitar o dano caso um ataque ocorra.
+   - Função: Gerenciamento de bancos de dados com criptografia automática de dados e recursos que reduzem a superfície de ataque. **Não previne SQL Injection por si só**, mas ajuda a limitar o dano caso um ataque ocorra.
    - Configurações para melhorar a segurança:
      - IAM Authentication: Use autenticação baseada no IAM para evitar senhas SQL hardcoded.
      - Encrypted connections: Garanta que as conexões com o banco sejam feitas via SSL para impedir interceptações.
@@ -484,7 +484,7 @@ SELECT * FROM table WHERE userid = '12345';
    - Função: Gerenciamento de autenticação de usuários com foco na segurança.
    - Como se relaciona com SQL Injection:
      - Cognito assume o fluxo de **autenticação** fora da sua aplicação. Assim, aquele formulário de login deixa de ser um ponto de entrada seu para SQL Injection, pois você não escreve mais a consulta de login manualmente.
-     - **Atenção:** isso não "imuniza" o resto do sistema. Todas as **demais** consultas da sua aplicação (busca, listagem, cadastro, etc.) continuam exigindo consultas parametrizadas — Cognito cuida do login, não das outras queries.
+     - **Atenção:** isso não "imuniza" o resto do sistema. Todas as **demais** consultas da sua aplicação (busca, listagem, cadastro, etc.) continuam exigindo consultas parametrizadas. Cognito cuida do login, não das outras queries.
 
 ---
 
@@ -492,7 +492,7 @@ SELECT * FROM table WHERE userid = '12345';
    - Função: Protege segredos usados pela aplicação (como senhas de banco de dados) e faz a rotação automática.
    - Como se relaciona com segurança:
      - Guardar credenciais fora do código evita que senhas vazem junto com o código-fonte e reduz o impacto de um vazamento.
-     - **Observação:** credencial hardcoded é um problema de segurança **diferente** do SQL Injection — o Secrets Manager melhora a postura geral de segurança, mas **não** previne injeção de SQL.
+     - **Observação:** credencial hardcoded é um problema de segurança **diferente** do SQL Injection, já o Secrets Manager melhora a postura geral de segurança, mas **não** previne injeção de SQL.
 
      Exemplo de Integração:
      ```php
@@ -511,7 +511,7 @@ SELECT * FROM table WHERE userid = '12345';
 ---
 ## 5) Outros códigos SQL de ataque (histórico / opcional)
 
-> **Nota:** os exemplos abaixo são **históricos e opcionais**. Baseiam-se em mensagens de erro do **Microsoft SQL Server 2000 / OLE DB / ASP** e servem para ilustrar a *enumeração de esquema por mensagens de erro* — uma técnica de descoberta em que o atacante aprende a estrutura do banco a partir dos próprios erros retornados. Eles **não** usam o ambiente do laboratório (SQLite/Python) e podem ser tratados como conteúdo avançado. Lembre-se: em SQL, o comentário de linha é `--` (dois hifens).
+> **Nota:** os exemplos abaixo são **históricos e opcionais**. Baseiam-se em mensagens de erro do **Microsoft SQL Server 2000 / OLE DB / ASP** e servem para ilustrar a *enumeração de esquema por mensagens de erro*, uma técnica de descoberta em que o atacante aprende a estrutura do banco a partir dos próprios erros retornados. Eles **não** usam o ambiente do laboratório (SQLite/Python) e podem ser tratados como conteúdo avançado. Lembre-se: em SQL, o comentário de linha é `--` (dois hifens).
 
 
 ### 5.1) ```Username: ' having 1=1 --```
