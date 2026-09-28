@@ -48,13 +48,13 @@ Dependendo da forma que você interage com as aplicações de RDS do seu projeto
 ## 2) Como funciona o ataque?
 
 
-#### 2.1) Um atacante insere código SQL malicioso em um campo de entrada de um site ou aplicação, isto é, ele usa a sua API, a sua aplicação para chegar no seu RDS.
+### 2.1) Um atacante insere código SQL malicioso em um campo de entrada de um site ou aplicação, isto é, ele usa a sua API, a sua aplicação para chegar no seu RDS.
 
 ---
-#### 2.2) Esse código é então executado pelo banco de dados, podendo alterar sua operação original.
+### 2.2) Esse código é então executado pelo banco de dados, podendo alterar sua operação original.
 
 ---
-#### 2.3) Exemplos de ações possíveis
+### 2.3) Exemplos de ações possíveis
 
 * Recuperação de dados sensíveis;
 
@@ -64,10 +64,10 @@ Dependendo da forma que você interage com as aplicações de RDS do seu projeto
 
 * Download completo da sua base.
 
-### Imagine os preços de um produto sendo alterados para baixo, criando uma corrida frenética no site. Ou, um roubo de cartões de crédito + CVC.
+#### Imagine os preços de um produto sendo alterados para baixo, criando uma corrida frenética no site. Ou, um roubo de cartões de crédito + CVC.
 
 ---
-#### 2.4) Exemplo de código vulnerável
+### 2.4) Exemplo de código vulnerável
 
 Imagine uma aplicação de login em um banco de dados, como a da imagem abaixo. O formulário e o servidor completos deste exemplo (propositalmente vulneráveis) estão no arquivo [`app.py`](./src/app.py), dentro da subpasta `src` do repositório — você vai baixá-lo e executá-lo na prática guiada do item **2.8**.
 
@@ -105,7 +105,7 @@ sql = "SELECT id FROM users WHERE username='" + user + "' AND password='" + pass
 - A expressão ```user + "' AND password='" + pass + "``` insere diretamente os valores de ```user``` e ```pass``` na string SQL. Isso é uma forma arriscada de construir consultas SQL, pois o conteúdo de ```user``` e ```pass``` não está sendo verificado ou tratado de forma segura.
 
 ---
-#### 2.5) Exemplo 1 de código malicioso
+### 2.5) Exemplo 1 de código malicioso
 
 Imagine que foi digitado o seguinte:
 
@@ -156,7 +156,7 @@ SELECT id FROM users WHERE username= 'godoi' AND password='XxxXxxX' OR 1=1'
 * A condição ```OR 1=1``` sempre será verdadeira, o que pode levar à execução de uma consulta que ignora o nome de usuário e senha corretos, permitindo ao invasor obter acesso sem fornecer uma senha válida.
 
 ---
-#### 2.6) Exemplo 2 de código malicioso
+### 2.6) Exemplo 2 de código malicioso
 
 Imagine que foi digitado o seguinte:
 
@@ -191,7 +191,7 @@ SELECT id FROM users WHERE username= ' ' OR 1=1 --' AND password=' '
    - Múltiplas seleções podem ser formadas para um único resultado com o comando UNION
 
 ---
-#### 2.7) Ataques em HTTP/GET
+### 2.7) Ataques em HTTP/GET
 
 Ao se usar HTTP/GET, as variáveis do formulário ficam expostas na barra de navegação e oferecem um ponto de partida para manipulação. Por exemplo:
 ```http://testphp.vulnweb.com/artists.php?artist=1```
@@ -204,7 +204,7 @@ O formulário tem um método **get** que expõe a variável ```artist=1```. Veja
 
 
 ---
-#### 2.8) Prática guiada: monte o laboratório e capture as senhas no Wireshark
+### 2.8) Prática guiada: monte o laboratório e capture as senhas no Wireshark
 
 Agora que você já viu a teoria, vamos fazer o ataque de verdade. Nesta prática você vai subir um site de banco **fictício** e propositalmente vulnerável, ver a senha trafegando em **texto puro** no Wireshark e **burlar o login** com os ataques dos itens 2.5 e 2.6.
 
@@ -320,9 +320,9 @@ Salve, pare o servidor (`Ctrl + C`) e rode de novo. Repita os ataques A e B → 
 4. Ligando com a seção 4: quais serviços da AWS (WAF, RDS, Secrets Manager, Cognito) ajudariam a defender esse mesmo login em produção?
 
 ---
-### 3) Prevenções
+## 3) Prevenções
 
-#### 3.1) Prevenção usando ASP (Active Server Pages)
+### 3.1) Prevenção usando ASP (Active Server Pages)
 
 A prevenção é simples, mas o sucesso do ataque acaba sendo consequência da falta de preparo dos desenvolvedores. O serviço AWS WAF (Web Application Firewalls) não detectam as vulnerabilidades, mas sinalizam alarmes em situações conhecidas de ataque ou em situações de grande número de erros ou **UNIONS** dentro de solicitações.
 
@@ -370,7 +370,7 @@ Este código está realizando duas operações SQL separadas: uma **consulta** e
 3. **Senhas não seguras**: o código está inserindo a senha diretamente no banco de dados, o que não é uma prática segura. Idealmente, as senhas devem ser **hasheadas** (usando, por exemplo, ```bcrypt```) antes de serem armazenadas.
 
 ---
-#### 3.2) Usando PHP para Objetos
+### 3.2) Usando PHP para Objetos
 
 ```
 $stmt = $pdo->prepare('SELECT * FROM users WHERE name = :name');
@@ -389,7 +389,7 @@ Este código usa **PDO** (PHP Data Objects) para realizar uma consulta ao banco 
 - **```foreach```**: Este laço percorre os resultados da consulta. Cada linha de resultado da tabela ```users``` será armazenada na variável ```$row``` a cada iteração. O ```$row``` será um array associativo que contém os dados retornados pelo banco de dados para cada linha que corresponde ao critério de consulta (onde o campo ```name``` é igual ao valor passado). **Dentro do ```foreach```** você pode realizar operações com os dados retornados, como exibi-los ou processá-los de acordo com a lógica da aplicação.
 
 ---
-#### 3.3) Usando MySQLi
+### 3.3) Usando MySQLi
 
 ```
 $stmt = $dbConnection->prepare('SELECT * FROM employees WHERE name = ?');
@@ -427,7 +427,7 @@ while ($row = $result->fetch_assoc()) {
 Neste exemplo, supondo que a tabela ```employees``` tenha as colunas ```name``` e ```position```, o código acima exibiria o nome e o cargo de cada funcionário que corresponde ao nome passado na consulta.
 
 ---
-#### 3.4) Usando JavaScript (Node.js)
+### 3.4) Usando JavaScript (Node.js)
 
 ```
 var sql = "SELECT * FROM table WHERE userid = ?";
@@ -466,7 +466,7 @@ SELECT * FROM table WHERE userid = '12345';
      - Preços: [https://aws.amazon.com/pt/waf/pricing/](https://aws.amazon.com/pt/waf/pricing/)
 
 ---
-#### 4.2) Amazon RDS (Relational Database Service)
+### 4.2) Amazon RDS (Relational Database Service)
    - Função: Gerenciamento seguro de bancos de dados, com encriptação automática de dados e proteção contra falhas de segurança comuns.
    - Configurações para melhorar a segurança:
      - IAM Authentication: Use autenticação baseada no IAM para evitar senhas SQL hardcoded.
@@ -474,7 +474,7 @@ SELECT * FROM table WHERE userid = '12345';
      - Auditoria de Logs: Ative logs de auditoria para monitorar e registrar consultas suspeitas.
 
 ---
-#### 4.3) Amazon Cognito
+### 4.3) Amazon Cognito
    - Função: Gerenciamento de autenticação de usuários com foco na segurança.
    - Como ajuda a prevenir SQL Injection:
      - Cognito permite que sua aplicação autentique usuários sem precisar manipular diretamente as senhas no código-fonte. Isso reduz o risco de injeções maliciosas em campos sensíveis.
@@ -482,7 +482,7 @@ SELECT * FROM table WHERE userid = '12345';
 
 ---
 
-#### 4.4) AWS Secrets Manager
+### 4.4) AWS Secrets Manager
    - Função: Protege segredos necessários pela aplicação (como senhas de banco de dados) e faz a rotação automática.
    - Como utilizar:
      - Configure o AWS Secrets Manager para gerenciar credenciais do banco de dados.
@@ -495,7 +495,7 @@ SELECT * FROM table WHERE userid = '12345';
      ```
 
 ---
-#### 4.5) Outras Boas Práticas de Segurança na AWS
+### 4.5) Outras Boas Práticas de Segurança na AWS
    
    - Least Privilege Principle (Princípio do Menor Privilégio): Assegure-se de que os usuários e aplicações tenham apenas as permissões necessárias. Evite dar privilégios administrativos sem necessidade.
    - Multi-Factor Authentication (MFA): Habilite MFA para usuários IAM para aumentar a segurança das credenciais.
