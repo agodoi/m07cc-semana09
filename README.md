@@ -12,11 +12,11 @@ Neste encontro iremos abordar a proteção de dados na nuvem no contexto de dese
 ---
 ## 1) Vantagens para o seu Projeto
 
-Entender os riscos de SQL Injection no projeto da venda de ingressos minimiza as vulnerabilidades, já que o SQL Injection é o ataque mais famosos que visa explorar falhas de segurança em aplicações que interagem com bancos de dados, permitindo que invasores insiram ou manipulem consultas SQL maliciosas.
+Entender os riscos de SQL Injection em projetos que envolve banco SQL, já que o SQL Injection é o ataque mais famosos que visa explorar falhas de segurança em aplicações que interagem com bancos de dados, permitindo que invasores insiram ou manipulem consultas SQL maliciosas.
 
 O SQL Injection está na mesma calçada da fama de DDoS. Aqui na [Wikipedia](https://en.wikipedia.org/wiki/SQL_injection#Examples) você encontra um histórico dos principais ataques.
 
-<img src="https://github.com/agodoi/sqlinjection/blob/main/imgs/sql_injection-01.jpg" width="800">
+<img src="https://github.com/agodoi/sqlinjection/blob/main/imgs/sql_injection-01.jpg" width="700">
 
 
 Dependendo da forma que você interage com as aplicações de RDS do seu projeto, o invasor pode apagar seu banco em alguns segundos.
