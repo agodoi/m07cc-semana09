@@ -22,27 +22,27 @@ O SQL Injection está na mesma calçada da fama de DDoS. Aqui na [Wikipedia](htt
 Dependendo da forma que você interage com as aplicações de RDS do seu projeto, o invasor pode apagar seu banco em alguns segundos.
 
 ### 1.1) Proteção de Dados Sensíveis
-   - O sistema de inventário de ingressos lida com a sincronização de dados de estoque entre back e front-end. Proteger o banco de dados contra SQL Injection garante que informações críticas, como quantidades de estoque e detalhes dos eventos, sejam mantidas seguras, impedindo o vazamento de dados internos que poderiam prejudicar a operação.
+   - A maioria das aplicações lida com a sincronização de dados entre back-end e front-end. Proteger o banco de dados contra SQL Injection garante que informações críticas do sistema sejam mantidas seguras, impedindo o vazamento de dados internos que poderiam prejudicar a operação.
 
 ---
 ### 1.2) Maior Confiabilidade do Sistema
-   - Ao implementar mecanismos que evitam SQL Injection, como **prepared statements** ou **ORM (Object-Relational Mapping)**, a confiabilidade do sistema aumenta, pois ele não será vulnerável a manipulações externas. Isso é crucial para garantir que o sistema de venda de ingressos continue funcionando corretamente, sem interferências de usuários maliciosos.
+   - Ao implementar mecanismos que evitam SQL Injection, como **prepared statements** ou **ORM (Object-Relational Mapping)**, a confiabilidade do sistema aumenta, pois ele não será vulnerável a manipulações externas. Isso é crucial para garantir que a aplicação continue funcionando corretamente, sem interferências de usuários maliciosos.
 
 ---
 ### 1.3) Conformidade com Normas de Segurança
-   - Empresas como a PulseStage estão frequentemente sujeitas a regulamentações de privacidade e segurança de dados (como LGPD). A prevenção de ataques de SQL Injection é uma prática de segurança recomendada que ajuda a empresa a se manter em conformidade com essas normas, evitando multas e danos à reputação.
+   - Empresas que lidam com dados de usuários estão frequentemente sujeitas a regulamentações de privacidade e segurança de dados (como LGPD). A prevenção de ataques de SQL Injection é uma prática de segurança recomendada que ajuda a empresa a se manter em conformidade com essas normas, evitando multas e danos à reputação.
 
 ---
 ### 1.4) Redução de Custos com Incidentes de Segurança
-   - Investir na prevenção de ataques como o SQL Injection pode evitar incidentes de segurança caros, tanto em termos de reparo de sistemas quanto em possíveis responsabilidades legais. Isso é especialmente importante para um sistema que opera em múltiplas localidades e lida com grandes volumes de transações, como o sistema de inventário distribuído descrito.
+   - Investir na prevenção de ataques como o SQL Injection pode evitar incidentes de segurança caros, tanto em termos de reparo de sistemas quanto em possíveis responsabilidades legais. Isso é especialmente importante para sistemas que operam em múltiplas localidades e lidam com grandes volumes de transações.
 
 ---
 ### 1.5) Melhoria na Experiência do Usuário Final
-   - Um sistema que sofre menos com falhas de segurança e funciona de forma eficiente oferece uma melhor experiência para o usuário final. No caso do e-commerce B2B e B2C, evitar SQL Injection garante que os clientes possam confiar na plataforma e na exatidão dos prazos de entrega e disponibilidade de produtos.
+   - Um sistema que sofre menos com falhas de segurança e funciona de forma eficiente oferece uma melhor experiência para o usuário final. Em qualquer plataforma que atenda clientes finais, evitar SQL Injection garante que os usuários possam confiar no sistema e na integridade dos dados exibidos.
 
 ---
 ### 1.6) Preparação para Escalabilidade
-   - O sistema descrito precisa suportar grandes volumes de transações. Implementar medidas de segurança contra SQL Injection permite que a plataforma escale de forma segura, sem se tornar mais vulnerável à medida que o volume de usuários e transações cresce.
+   - Aplicações que precisam suportar grandes volumes de transações se beneficiam de medidas de segurança contra SQL Injection, que permitem que a plataforma escale de forma segura, sem se tornar mais vulnerável à medida que o volume de usuários e transações cresce.
 
 ---
 ## 2) Como funciona o ataque?
@@ -64,7 +64,7 @@ Dependendo da forma que você interage com as aplicações de RDS do seu projeto
 
 * Download completo da sua base.
 
-### Imagine os valores dos ingressos sendo alterados para baixo, criando uma corrida frenética nos sites. Ou, um roubo de cartões de crédito + CVC.
+### Imagine os preços de um produto sendo alterados para baixo, criando uma corrida frenética no site. Ou, um roubo de cartões de crédito + CVC.
 
 ---
 #### 2.4) Exemplo de código vulnerável
