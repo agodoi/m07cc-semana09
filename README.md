@@ -93,7 +93,7 @@ Imagine uma aplicação como essa de login em um banco de dados.
 
 ```
 
-<img src="https://github.com/agodoi/sqlinjection/blob/main/imgs/tela_banco_01.png" width="800">
+<img src="https://github.com/agodoi/m07cc-semana09/blob/main/imgs/preview_login.png" width="800">
 
 Se for digitada a entrada:
 
