@@ -131,7 +131,7 @@ Imagine que foi digitado o seguinte:
 * A consulta SQL montada tem erro de sintaxe (' a mais no final):
 
 ```
-SELECT id FROM users WHERE username= 'godoi' AND password='XxxXxxX' OR 1=1'
+SELECT id FROM users WHERE username= 'godoi' AND password= XxxXxxX' OR '1=1
 ```
 
 * Esse payload **sozinho quebra a consulta** (por causa da aspa a mais no final). Para o ataque **funcionar de fato**, fecha-se a aspa — ```' OR '1'='1``` — ou comenta-se o resto da linha com ```--```, como no item 2.6. Você vai testar as duas formas na prática do item 2.8.
