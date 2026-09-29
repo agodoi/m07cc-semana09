@@ -283,7 +283,7 @@ GET /login?username=godoi&password=admin12345&enviar=Entrar HTTP/1.1
 - **Ataque A (item 2.5):** Usuário `godoi` / Senha `XxxXxxX' OR '1'='1` → **entra como admin**, mesmo com a senha errada.
 - **Ataque B (item 2.6):** Usuário `' OR 1=1 --` / Senha em branco → **entra como admin**, sem saber usuário nem senha.
 
-> Observação importante: o payload exato do item 2.5 (`XxxXxxX' OR 1=1`, sem fechar a aspa) gera **erro de sintaxe**, exatamente como o próprio material aponta. Por isso, no laboratório, usamos a forma com as **aspas balanceadas** (`' OR '1'='1`) ou a versão com **comentário `--`** do item 2.6.
+> Observação importante: o payload exato do item 2.5 (`XxxXxxX' OR '1=1`, sem fechar a aspa) gera **erro de sintaxe**, exatamente como o próprio material aponta. Por isso, no laboratório, usamos a forma com as **aspas balanceadas** (`' OR '1'='1`) ou a versão com **comentário `--`** do item 2.6.
 
 Olhe a consulta SQL que a página mostra. No ataque B ela vira:
 
